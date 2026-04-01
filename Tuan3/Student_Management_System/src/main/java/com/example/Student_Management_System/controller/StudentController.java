@@ -4,7 +4,8 @@ import com.example.Student_Management_System.dto.ApiResponse;
 import com.example.Student_Management_System.dto.CreateStudentRequest;
 import com.example.Student_Management_System.dto.UpdateStudentRequest;
 import com.example.Student_Management_System.model.Student;
-import com.example.Student_Management_System.service.StudentService;
+import com.example.Student_Management_System.service.impl.StudentServiceImpl;
+
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,9 @@ import java.util.List;
 @RestController
 @RequestMapping("api/students")
 public class StudentController {
-    private final StudentService studentService;
+    private final StudentServiceImpl studentService;
 
-    public StudentController(StudentService studentService) {
+    public StudentController(StudentServiceImpl studentService) {
         this.studentService = studentService;
     }
 
@@ -45,7 +46,8 @@ public class StudentController {
 
     // PUT /api/students/{id} — cập nhật
     @PutMapping("/{id}")
-    public ResponseEntity<ApiResponse<Student>> updateStudent(@PathVariable Long id, @Valid @RequestBody UpdateStudentRequest request) {
+    public ResponseEntity<ApiResponse<Student>> updateStudent(@PathVariable Long id,
+            @Valid @RequestBody UpdateStudentRequest request) {
         Student student = studentService.updateStudent(id, request);
         return ResponseEntity.ok(ApiResponse.success(student));
     }

@@ -1,33 +1,38 @@
-package com.example.Student_Management_System.service;
+package com.example.Student_Management_System.service.impl;
 
 import com.example.Student_Management_System.dto.CreateStudentRequest;
 import com.example.Student_Management_System.dto.UpdateStudentRequest;
 import com.example.Student_Management_System.exception.DuplicateResourceException;
 import com.example.Student_Management_System.exception.ResourceNotFoundException;
 import com.example.Student_Management_System.model.Student;
-import org.springframework.boot.micrometer.metrics.autoconfigure.MetricsProperties;
+import com.example.Student_Management_System.service.IStudentServiceImpl;
+
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class StudentService {
+public class StudentServiceImpl implements IStudentServiceImpl {
     private final List<Student> students = new ArrayList<>();
     private Long nextId = 1L;
 
+    @Override
     public List<Student> getAllStudents() {
         return students;
     }
 
     // Khi tìm/sửa/xóa theo id: throw ResourceNotFoundException nếu không tồn tại
+    @Override
     public Student getStudentById(Long id) {
         return students.stream().filter(s -> s.getId().equals(id))
                 .findFirst()
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
     }
 
-    // Khi tạo: kiểm tra trùng studentCode và trùng email -> throw DuplicateResourceException
+    // Khi tạo: kiểm tra trùng studentCode và trùng email -> throw
+    // DuplicateResourceException
+    @Override
     public Student createStudent(CreateStudentRequest request) {
         // 1. kiem tra trung studentCode
         boolean studentCodeExists = students.stream()
@@ -64,6 +69,7 @@ public class StudentService {
 
     // Khi sửa: kiểm tra email mới có bị trùng với sinh viên khác không
     // Khi tìm/sửa/xóa theo id: throw ResourceNotFoundException nếu không tồn tại
+    @Override
     public Student updateStudent(Long id, UpdateStudentRequest request) {
         // 1. Tim SV cu, neu ko bao loi
         Student existingStudent = students.stream().filter(s -> s.getId().equals(id))
@@ -71,7 +77,8 @@ public class StudentService {
                 .orElseThrow(() -> new ResourceNotFoundException("Student", "id", id));
 
         // 2. Kiem tra email trung
-        boolean emailExists = students.stream().anyMatch(s -> s.getEmail().equals(request.getEmail()) && !s.getId().equals(id));
+        boolean emailExists = students.stream()
+                .anyMatch(s -> s.getEmail().equals(request.getEmail()) && !s.getId().equals(id));
         if (emailExists) {
             throw new DuplicateResourceException("Student", "email", request.getEmail());
         }
@@ -89,6 +96,7 @@ public class StudentService {
     }
 
     // Khi tìm/sửa/xóa theo id: throw ResourceNotFoundException nếu không tồn tại
+    @Override
     public void deleteStudent(Long id) {
         // 1. Co gang xoa
         boolean removed = students.removeIf(s -> s.getId().equals(id));
@@ -100,12 +108,14 @@ public class StudentService {
     }
 
     // Lọc sinh viên theo ngành học (major)
+    @Override
     public List<Student> getStudentsByMajor(String major) {
         // Có thể trả về danh sách rỗng?
         return students.stream().filter(s -> s.getMajor().equals(major)).toList();
     }
 
     // Lấy danh sách sinh viên xuất sắc (GPA ≥ 3.6)
+    @Override
     public List<Student> getHonorStudents() {
         return students.stream().filter(s -> s.getGpa() >= 3.6).toList();
     }
