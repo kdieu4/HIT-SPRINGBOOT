@@ -8,14 +8,17 @@ import com.example.Student_Management_System.service.impl.StudentServiceImpl;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("api/students")
+@Validated
 public class StudentController {
     private final StudentServiceImpl studentService;
 
@@ -31,7 +34,7 @@ public class StudentController {
 
     // GET /api/students/{id} — lấy theo id
     @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<Student>> getStudentById(@Valid @PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Student>> getStudentById(@PathVariable Long id) {
         Student student = studentService.getStudentById(id);
         return ResponseEntity.ok(ApiResponse.success(student));
     }

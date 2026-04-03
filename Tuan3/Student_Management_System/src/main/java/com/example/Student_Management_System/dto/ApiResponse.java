@@ -36,6 +36,6 @@ public class ApiResponse<T> {
     }
 
     public static <T> ApiResponse<T> error(int code, String message) {
-        return new ApiResponse<T>(code, "Tạo thành công");
+        return new ApiResponse<T>(code, message);
     }
 }
